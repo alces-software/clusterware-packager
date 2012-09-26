@@ -4,22 +4,25 @@
 ## Copyright (c) 2008-2012 Alces Software Ltd
 ##
 ################################################################################
-foreach i ( modules modulerc modulespath )
-    if ( ! -f "$HOME/.$i" ) then
-	ln -s "$HOME/.alces/etc/$i" "$HOME/.$i"
+if ( $uid != "0" ) then
+    if ( "${alces_MODE}" == "system" && ! -f "$HOME/.alces/.alces-suite" ) then
+	/opt/alces/bin/alces config install
     endif
-end
-
-#if ( -d "$HOME/.alces/core/Modules" ) then
-#    alias module alces module
-#endif
-
-if ($?tcsh) then
-	setenv alces_SHELL "tcsh"
+    foreach a ( modules modulerc modulespath )
+	if ( ! -f "$HOME/.$a" ) then
+	    ln -s "$HOME/.alces/etc/$a" "$HOME/.$a"
+	endif
+    end
 else
-	setenv alces_SHELL "csh"
+    # we are root, so must be using a system-wide installation
+    foreach a ( modules modulerc modulespath )
+	if ( ! -f "$HOME/.$a" ) then
+	    cp /opt/alces/etc/skel/$a "$HOME/.$a"
+	endif
+    end
 endif
-set exec_prefix='$HOME/.alces/core/Modules/bin'
+
+set exec_prefix='${alces_PATH}/opt/Modules/bin'
 
 set prefix=""
 set postfix=""
@@ -48,10 +51,14 @@ set postfix = "set _exit="'$status'"; $postfix; test 0 = "'$_exit;'
 alias module $prefix'eval `'$exec_prefix'/modulecmd '$alces_SHELL' '$histchar'*`; '$postfix
 
 if (! $?MODULEPATH ) then
-    if ( -f "$HOME/.modulespath" ) then
-      setenv MODULEPATH `sed -n 's/[      #].*$//; /./H; $ { x; s/^\n//; s/\n/:/g; p; }' $HOME/.modulespath`
+    if ( "${alces_MODE}" == "system" ) then
+      setenv MODULEPATH `sed -n 's/[      #].*$//; /./H; $ { x; s/^\n//; s/\n/:/g; p; }' /opt/alces/etc/modulespath`
     else
-      setenv MODULEPATH "$HOME/gridware/etc/modules"
+      setenv MODULEPATH ""
+    endif
+    if ( -f "$HOME/.modulespath" ) then
+      set usermodulepath = `sed -n 's/[     #].*$//; /./H; $ { x; s/^\n//; s/\n/:/g; p; }' "$HOME/.modulespath"`
+      setenv MODULEPATH "$usermodulepath":"$MODULEPATH"
     endif
 endif
 
@@ -59,12 +66,7 @@ if (! $?LOADEDMODULES ) then
   setenv LOADEDMODULES ""
 endif
 
-alias al 'alces'
-# XXX - alces enhanced modules not fully supported under csh :-(
 alias mod 'module'
-alias alces $prefix'if ( -e $HOME/.alces/bin/alces ) $HOME/.alces/bin/alces \!*; '$postfix
-# XXX
-# export PS1='$(alces message last)'$PS1
 
 #source modules file from home dir
 if ( -r ~/.modules ) then

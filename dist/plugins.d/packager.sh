@@ -5,7 +5,7 @@
 ##
 ################################################################################
 if [ "$UID" != "0" ]; then
-    if [ ! -f "$HOME/.alces/.alces-suite" ]; then
+    if [ "${alces_MODE}" = "system" -a ! -f "${alces_PATH}/.alces-suite" ]; then
         /opt/alces/bin/alces config install
     fi
     for a in modules modulerc modulespath; do
@@ -14,33 +14,43 @@ if [ "$UID" != "0" ]; then
 	fi
     done
 else
+    # we are root, so must be using a system-wide installation
     for a in modules modulerc modulespath; do
 	if [ ! -f "$HOME/.$a" ]; then
 	    cp /opt/alces/etc/skel/$a "$HOME/.$a"
 	fi
     done
 fi
-if [ -d /opt/alces/core/Modules ]; then
+if [ -d "${alces_PATH}/opt/Modules" ]; then
     module() { alces module "$@" ; }
-    export -f module
-    export MODULEPATH=`sed -n 's/[      #].*$//; /./H; $ { x; s/^\n//; s/\n/:/g; p; }' /opt/alces/etc/modulespath`
+    if [ "$ZSH_VERSION" ]; then
+	export module
+    else
+	export -f module
+    fi
+    if [ "${alces_MODE}" = "system" ]; then
+      MODULEPATH=`sed -n 's/[      #].*$//; /./H; $ { x; s/^\n//; s/\n/:/g; p; }' /opt/alces/etc/modulespath`
+    fi
     if [ -f "$HOME/.modulespath" ]; then
         USERMODULEPATH=`sed -n 's/[     #].*$//; /./H; $ { x; s/^\n//; s/\n/:/g; p; }' "$HOME/.modulespath"`
-        MODULEPATH="$USERMODULEPATH:$MODULEPATH"
+    else
+	USERMODULEPATH="$HOME/gridware/etc/modules"
     fi
+    export MODULEPATH="$(eval echo $USERMODULEPATH:$MODULEPATH)"
 fi
 alias mod="alces module"
 
-if [ "$UID" == "0" ]; then
-    if [ -d "/opt/alces/var/lib/packager/repos/base" -a ! -f "/opt/alces/var/lib/packager/repos/base/.last-update" ]; then
+# If we're root and system mode, then update.  If we're a user and user mode, then update.
+if [ "$UID" = "0" -a "${alces_MODE}" = "system" -o "${alces_MODE}" = "user" ]; then
+    if [ -d "${alces_PATH}/var/lib/packager/repos/base" -a ! -f "${alces_PATH}/var/lib/packager/repos/base/.last-update" ]; then
         alces packager update base
-        date +%s > "/opt/alces/var/lib/packager/repos/base/.last-update"
+        date +%s > "${alces_PATH}/var/lib/packager/repos/base/.last-update"
     fi
 fi
 
 # Source modules from home directory
 if [ -f ~/.modules ]; then
-  source ~/.modules
+    source ~/.modules
 fi
 
 if [ "$BASH_VERSION" ]; then

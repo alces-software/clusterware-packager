@@ -86,32 +86,37 @@ say_done $?
 cp "${alces_SRC_PATH}/${NAME}/archives"/* "${alces_ARCHIVES_PATH}"
 
 title "Installing environment modules"
-cd "${alces_SRC_PATH}"
-doing 'Extract'
-tar xzf "${alces_ARCHIVES_PATH}/modules-${alces_modules_version}c.tar.gz"
-say_done $?
-cd modules-${alces_modules_version}
-doing 'Configure'
-if [ -f /usr/lib64/tclConfig.sh ]; then
-    TCLLIB=/usr/lib64
+if [ -d "${alces_PATH}/opt/Modules" ]; then
+    doing 'Skip'
+    say_done $?
 else
-    TCLLIB=/usr/lib
+    cd "${alces_SRC_PATH}"
+    doing 'Extract'
+    tar xzf "${alces_ARCHIVES_PATH}/modules-${alces_modules_version}c.tar.gz"
+    say_done $?
+    cd modules-${alces_modules_version}
+    doing 'Configure'
+    if [ -f /usr/lib64/tclConfig.sh ]; then
+	TCLLIB=/usr/lib64
+    else
+	TCLLIB=/usr/lib
+    fi
+    ./configure --disable-versioning --with-tcl=$TCLLIB --prefix="${alces_PATH}/opt" &> "${alces_PATH}/${LOGDIR}/modules-configure.log"
+    say_done $?
+    doing 'Compile'
+    make &> "${alces_PATH}/${LOGDIR}/modules-make.log"
+    say_done $?
+    doing 'Install'
+    make install &> "${alces_PATH}/${LOGDIR}/modules-install.log"
+    say_done $?
 fi
-./configure --disable-versioning --with-tcl=$TCLLIB --prefix="${alces_PATH}/opt" &> "${alces_PATH}/${LOGDIR}/modules-configure.log"
-say_done $?
-doing 'Compile'
-make &> "${alces_PATH}/${LOGDIR}/modules-make.log"
-say_done $?
-doing 'Install'
-make install &> "${alces_PATH}/${LOGDIR}/modules-install.log"
-say_done $?
 
 title "Installing '${NAME}' facility"
 doing 'Install'
 cp -r "${alces_SRC_PATH}/${NAME}/lib" "${alces_PATH}/opt/${BASENAME}/lib/${NAME}"
 say_done $?
 doing 'Link'
-for a in "${alces_PATH}/opt/${BASENAME}/lib/${NAME}/actions"; do
+for a in "${alces_PATH}/opt/${BASENAME}/lib/${NAME}/lib/actions"/*; do
   ln -s $a "${alces_PATH}/opt/${BASENAME}/lib/actions"
 done
 say_done $?
@@ -132,7 +137,12 @@ fi
 mkdir -p "${alces_GRIDWARE}/pkg" "${alces_GRIDWARE}/etc/modules" "${alces_GRIDWARE}/etc"
 doing 'Configure'
 cp -r "${alces_SRC_PATH}/${NAME}/dist/modules"/* "${alces_GRIDWARE}/etc/modules"
-mv "${alces_PATH}/etc/repos" "${alces_GRIDWARE}/etc"
+cp -r "${alces_SRC_PATH}/${NAME}/dist/plugins.d"/* "${alces_PATH}/etc/${BASENAME}/plugins.d"
+if [ ! -d "${alces_GRIDWARE}/etc/repos" ]; then
+  mv "${alces_PATH}/etc/repos" "${alces_GRIDWARE}/etc"
+else
+  rm -r "${alces_PATH}/etc/repos"
+fi
 cat <<EOF > "${alces_PATH}/var/lib/${NAME}/repos/base/repo.yml"
 :source: $alces_BASE_REPO_PATH
 EOF
