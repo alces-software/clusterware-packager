@@ -83,7 +83,9 @@ fi
 say_done $?
 
 # Compile and install third party utilities
-cp "${alces_SRC_PATH}/${NAME}/archives"/* "${alces_ARCHIVES_PATH}"
+if [ -d "${alces_SRC_PATH}/${NAME}/archives" ]; then
+  cp "${alces_SRC_PATH}/${NAME}/archives"/* "${alces_ARCHIVES_PATH}"
+fi
 
 title "Installing environment modules"
 if [ -d "${alces_PATH}/opt/Modules" ]; then
@@ -117,7 +119,7 @@ cp -r "${alces_SRC_PATH}/${NAME}/lib" "${alces_PATH}/opt/${BASENAME}/lib/${NAME}
 say_done $?
 doing 'Link'
 for a in "${alces_PATH}/opt/${BASENAME}/lib/${NAME}/lib/actions"/*; do
-  ln -s $a "${alces_PATH}/opt/${BASENAME}/lib/actions"
+  ln -sf $a "${alces_PATH}/opt/${BASENAME}/lib/actions"
 done
 say_done $?
 
