@@ -73,6 +73,7 @@ say_done $?
 title "Reinstalling '${NAME}' facility"
 doing 'Reinstall'
 rm -rf "${alces_PATH}/opt/${BASENAME}/lib/${NAME}"
+mkdir "${alces_PATH}/opt/${BASENAME}/lib/${NAME}"
 cp -r "${alces_SRC_PATH}/${NAME}/lib" "${alces_PATH}/opt/${BASENAME}/lib/${NAME}"
 say_done $?
 doing 'Link'
