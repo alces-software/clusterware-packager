@@ -55,6 +55,8 @@ function say_done () {
     fi
 }
 
+LOGDIR="var/log/${NAME}"
+
 # Create initial configuration files
 title "Updating configuration"
 doing "Update"
