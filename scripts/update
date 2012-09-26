@@ -1,6 +1,7 @@
 #!/bin/bash
 
 NAME=packager
+BASENAME=symphony
 
 # ensure all children die when we do
 trap "/bin/kill -- -$BASHPID &>/dev/null" EXIT INT TERM
