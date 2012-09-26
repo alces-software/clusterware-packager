@@ -56,6 +56,12 @@ function say_done () {
     fi
 }
 
+cat <<EOF
+[33m===============================================================================
+ STARTING UPDATE
+===============================================================================[0m
+EOF
+
 LOGDIR="var/log/${NAME}"
 
 # Create initial configuration files
