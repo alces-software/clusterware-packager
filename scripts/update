@@ -1,7 +1,9 @@
 #!/bin/bash
 
-NAME=packager
 BASENAME=symphony
+NAME=packager
+
+alces_BASE_REPO_PATH=http://grover.alces-software.com/git/alces-packager-base
 
 # ensure all children die when we do
 trap "/bin/kill -- -$BASHPID &>/dev/null" EXIT INT TERM
