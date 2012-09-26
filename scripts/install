@@ -1,0 +1,142 @@
+#!/bin/bash
+
+BASENAME=symphony
+NAME=packager
+
+alces_modules_version=3.2.9
+alces_BASE_REPO_PATH=http://grover.alces-software.com/git/alces-packager-base
+
+# ensure all children die when we do
+trap "/bin/kill -- -$BASHPID &>/dev/null" EXIT INT TERM
+
+function toggle_spin () {
+	if [ -z "$spin_pid" ]; then
+	    (
+		i=1
+		sp="/-\|"
+		printf " "
+		while true;
+		do
+		    printf "\b[1m${sp:i++%${#sp}:1}[0m"
+		    if [[ i -eq ${#sp} ]]; then
+			i=0
+		    fi
+		    sleep 0.2
+		done
+	    ) &
+	    sleep 1
+	    spin_pid=$!
+	else
+	    sleep 1
+	    kill $spin_pid
+	    wait $spin_pid 2>/dev/null
+	    printf "\b"
+	    unset spin_pid
+	fi
+}
+
+function title() {
+    printf "\n > $1\n"
+}
+
+function doing() {
+    if [ -z "$2" ]; then
+	pad=12
+    else
+	pad=$2
+    fi
+    printf "    [36m%${pad}s[0m ... " "$1"
+    toggle_spin
+}
+
+function say_done () {
+    toggle_spin
+    if [ $1 -gt 0 ]; then
+	echo '[31mFAIL[0m'
+	exit 1
+    else
+	echo '[32mOK[0m '
+    fi
+}
+
+title "Creating initial directory structure"
+doing 'Create'
+[[ -d "${alces_PATH}/opt/${BASENAME}/lib/${NAME}" ]] || mkdir -p "${alces_PATH}/opt/${BASENAME}/lib/${NAME}"
+
+# Make directories
+LOGDIR="var/log/${NAME}"
+for a in var/cache/${NAME}/archives var/cache/${NAME}/src var/lib/${NAME}/repos/base var/lib/${NAME} $LOGDIR; do
+    [[ -d "${alces_PATH}/${a}" ]] || mkdir -p "${alces_PATH}/${a}"
+done
+say_done $?
+
+# Create initial configuration files
+title "Creating initial configuration"
+doing "Create"
+if (( UID == 0 )); then
+    cp -r "${alces_SRC_PATH}/${NAME}/etc/global"/* "${alces_PATH}/etc"
+    cp -r "${alces_SRC_PATH}/${NAME}/etc/system"/* "${alces_PATH}/etc"
+else
+    cp -r "${alces_SRC_PATH}/${NAME}/etc/global"/* "${alces_PATH}/etc"
+    cp -r "${alces_SRC_PATH}/${NAME}/etc/user"/* "${alces_PATH}/etc"
+fi
+say_done $?
+
+# Compile and install third party utilities
+cp "${alces_SRC_PATH}/${NAME}/archives"/* "${alces_ARCHIVES_PATH}"
+
+title "Installing environment modules"
+cd "${alces_SRC_PATH}"
+doing 'Extract'
+tar xzf "${alces_ARCHIVES_PATH}/modules-${alces_modules_version}c.tar.gz"
+say_done $?
+cd modules-${alces_modules_version}
+doing 'Configure'
+if [ -f /usr/lib64/tclConfig.sh ]; then
+    TCLLIB=/usr/lib64
+else
+    TCLLIB=/usr/lib
+fi
+./configure --disable-versioning --with-tcl=$TCLLIB --prefix="${alces_PATH}/opt" &> "${alces_PATH}/${LOGDIR}/modules-configure.log"
+say_done $?
+doing 'Compile'
+make &> "${alces_PATH}/${LOGDIR}/modules-make.log"
+say_done $?
+doing 'Install'
+make install &> "${alces_PATH}/${LOGDIR}/modules-install.log"
+say_done $?
+
+title "Installing '${NAME}' facility"
+doing 'Install'
+cp -r "${alces_SRC_PATH}/${NAME}/lib" "${alces_PATH}/opt/${BASENAME}/lib/${NAME}"
+say_done $?
+doing 'Link'
+for a in "${alces_PATH}/opt/${BASENAME}/lib/${NAME}/actions"; do
+  ln -s $a "${alces_PATH}/opt/${BASENAME}/lib/actions"
+done
+say_done $?
+
+# install ruby lib gems
+title "Configuring ruby components"
+cd "${alces_PATH}/opt/${BASENAME}/lib/${NAME}/lib/ruby"
+doing 'Configure'
+"${alces_RUBYHOME}/bin/bundle" install --local &> "${alces_PATH}/${LOGDIR}/components-install.log"
+say_done $?
+
+title "Setting up initial gridware structure"
+if (( UID == 0 )); then
+    alces_GRIDWARE="/opt/gridware"
+else
+    alces_GRIDWARE="${HOME}/gridware"
+fi
+mkdir -p "${alces_GRIDWARE}/pkg" "${alces_GRIDWARE}/etc/modules" "${alces_GRIDWARE}/etc"
+doing 'Configure'
+cp -r "${alces_SRC_PATH}/${NAME}/dist/modules"/* "${alces_GRIDWARE}/etc/modules"
+mv "${alces_PATH}/etc/repos" "${alces_GRIDWARE}/etc"
+cat <<EOF > "${alces_PATH}/var/lib/${NAME}/repos/base/repo.yml"
+:source: $alces_BASE_REPO_PATH
+EOF
+
+"$alces_RUBY" "${alces_SRC_PATH}/${NAME}/scripts/init.rb"
+say_done $?
+

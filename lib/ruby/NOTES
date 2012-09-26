@@ -1,0 +1,17 @@
+should be consistent about ways of loading modules:
+
+type/package -> default all
+
+type/package/compiler -> default version, tag; specific compiler
+type/package/version -> default compiler, tag; specific version
+type/package/tag -> default compiler, version; specific tag
+
+type/package/version/compiler -> default tag; specific version, compiler
+
+type/package/version/compiler/tag -> specific all
+
+type/package/compiler-gcc
+type/package/version (standard)
+type/package/tag-foo
+
+type/package/version/compiler ->

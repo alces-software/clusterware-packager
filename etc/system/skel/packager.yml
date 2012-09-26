@@ -1,0 +1,13 @@
+---
+:log_root: ~/.alces/var/log/packager
+:repo_paths:
+ - /opt/alces/var/lib/packager/repos/base
+ - /opt/gridware/etc/repos/local
+ - ~/gridware/etc/repos/personal
+:gridware: ~/gridware
+:modules_dir: ~/gridware/etc/modules
+:packages_dir: ~/gridware/pkg
+:archives_dir: ~/.alces/var/cache/packager/archives
+:buildroot: ~/.alces/var/cache/packager/src
+:dbroot: ~/.alces/var/lib/packager
+:global_dbroot: /opt/alces/var/lib/packager
