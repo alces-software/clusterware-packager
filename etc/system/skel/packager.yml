@@ -7,6 +7,7 @@
 :gridware: ~/gridware
 :modules_dir: ~/gridware/etc/modules
 :packages_dir: ~/gridware/pkg
+:local_archives_dir: ~/gridware/src
 :archives_dir: ~/.alces/var/cache/packager/archives
 :buildroot: ~/.alces/var/cache/packager/src
 :dbroot: ~/.alces/var/lib/packager
