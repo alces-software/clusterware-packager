@@ -43,7 +43,7 @@ case $action in
 	    mkdir -p "$HOME/gridware/pkg" "$HOME/gridware/etc/modules"
 	    alces_PATH="$HOME/.alces"
             # Make directories
-	    for a in etc var/build/archives var/build/src var/db var/log/alces/tools var/spool var/spool/tasks; do
+	    for a in etc var/log/packager var/spool var/spool/tasks var/lib/packager; do
 		[[ -d "${alces_PATH}/${a}" ]] || mkdir -p "${alces_PATH}/${a}"
 	    done
             # Create initial configuration files
