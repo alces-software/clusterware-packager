@@ -37,7 +37,7 @@ case $action in
 	    echo "$alces_BINNAME $us: alces tools already configured in '$HOME/.alces'."
 	elif [ "$UID" == "0" ]; then
 	    echo "$alces_BINNAME $us: refusing to configure alces tools for root user."
-	elif [ ! -d "/opt/alces/core/${alces_SUITENAME}" ]; then
+	elif [ ! -d "/opt/alces/opt/${alces_SUITENAME}" ]; then
 	    echo "$alces_BINNAME $us: alces tools is not installed with a system-wide configuration."
 	else
 	    mkdir -p "$HOME/gridware/pkg" "$HOME/gridware/etc/modules"
