@@ -20,3 +20,5 @@
 #
 /opt/gridware/etc/modules
 /opt/alces/etc/modules
+# This path is required for the existing stack tool set
+/opt/alces/modulefiles
