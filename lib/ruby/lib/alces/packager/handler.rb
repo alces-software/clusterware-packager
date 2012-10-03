@@ -111,12 +111,12 @@ module Alces
         if args.first.nil?
           raise MissingArgumentError, 'Please supply a package name'
         end
-        if metadata.empty?
+        if definitions.empty?
           raise NotFoundError, "Could not find package matching: #{args.first}"
         end
 
         Alces::Packager::CLI.send(:enable_paging)
-        metadata.sort.each do |m|
+        definitions.sort.each do |m|
           say "#{colored_path(m)}:"
           # XXX more info in here
           say "  #{'Summary'.underline}\n    #{m.summary}"
