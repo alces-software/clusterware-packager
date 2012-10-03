@@ -176,12 +176,12 @@ module Alces
 
       def aliases
         { [alias_prefix, alias_suffix].join('-') => path }.tap do |h|
-          h[[alias_prefix, version].join('-')] = path if default?
+          # h[[alias_prefix, version].join('-')] = path if default?
           if type == 'compilers'
             # compilers also have alias pointing to runtime libs
             lib_path = path.split('/').tap{ |a| a.shift }.unshift('libs').join('/')
             h[[compiler_libs_alias_prefix, alias_suffix].join('-')] = lib_path
-            h[[compiler_libs_alias_prefix, version].join('-')] = lib_path if default?
+            #h[[compiler_libs_alias_prefix, version].join('-')] = lib_path if default?
           end
         end
       end
