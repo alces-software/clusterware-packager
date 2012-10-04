@@ -58,7 +58,7 @@ case $action in
 		# Perform a more intelligent upgrade of this file by
 		# manipulating $alces_PATH/etc/modules and moving this
 		# one to a backup file.
-		if ! grep -q 'alces_MODULES_QUIET' "$HOME/.modules" ]; then
+		if ! grep -q 'alces_MODULES_QUIET' "$HOME/.modules"; then
 		    if [ "$(wc -l "$HOME/.modules")" != "1 $HOME/.modules" ]; then
 			echo "WARNING: .modules could not be upgraded; please consider merging ${alces_PATH}/etc/modules"
 		    else
