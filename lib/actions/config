@@ -58,11 +58,13 @@ case $action in
 		# Perform a more intelligent upgrade of this file by
 		# manipulating $alces_PATH/etc/modules and moving this
 		# one to a backup file.
-		if [ "$(wc -l "$HOME/.modules")" != "1 $HOME/.modules" ]; then
-		    echo "WARNING: .modules could not be upgraded; please consider merging ${alces_PATH}/etc/modules"
-		else
-		    mv "$HOME/.modules" "${alces_PATH}/etc/modules.alcesorig"
-		    (head -n13 "${alces_PATH}/etc/modules" && cat "${alces_PATH}/etc/modules.alcesorig" && tail -n+15 "${alces_PATH}/etc/modules") > "$HOME/.modules"
+		if ! grep -q 'alces_MODULES_QUIET' "$HOME/.modules" ]; then
+		    if [ "$(wc -l "$HOME/.modules")" != "1 $HOME/.modules" ]; then
+			echo "WARNING: .modules could not be upgraded; please consider merging ${alces_PATH}/etc/modules"
+		    else
+			mv "$HOME/.modules" "${alces_PATH}/etc/modules.alcesorig"
+			(head -n13 "${alces_PATH}/etc/modules" && cat "${alces_PATH}/etc/modules.alcesorig" && tail -n+15 "${alces_PATH}/etc/modules") > "$HOME/.modules"
+		    fi
 		fi
 	    fi
 	    if [ -f "$HOME/.modulerc" ]; then
