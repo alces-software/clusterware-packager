@@ -48,7 +48,37 @@ case $action in
 	    done
             # Create initial configuration files
 	    cp -r "/opt/alces/etc/skel"/* "${alces_PATH}/etc"
-	    mv "${alces_PATH}/etc/repos" "$HOME/gridware/etc"
+	    if [ -d "$HOME/gridware/etc/repos" ]; then
+		rm -rf "${alces_PATH}/etc/repos"
+	    else
+		mv "${alces_PATH}/etc/repos" "$HOME/gridware/etc"
+	    fi
+	    if [ -f "$HOME/.modules" ]; then
+		# found an existing .modules, likely to have existing user configuration
+		# Perform a more intelligent upgrade of this file by
+		# manipulating $alces_PATH/etc/modules and moving this
+		# one to a backup file.
+		if [ "$(wc -l "$HOME/.modules")" != "1 $HOME/.modules" ]; then
+		    echo "WARNING: .modules could not be upgraded; please consider merging ${alces_PATH}/etc/modules"
+		else
+		    mv "$HOME/.modules" "${alces_PATH}/etc/modules.alcesorig"
+		    (head -n13 "${alces_PATH}/etc/modules" && cat "${alces_PATH}/etc/modules.alcesorig" && tail -n+15 "${alces_PATH}/etc/modules") > "$HOME/.modules"
+		fi
+	    fi
+	    if [ -f "$HOME/.modulerc" ]; then
+		# found an existing .modulerc, likely to have existing user configuration
+		# emit a warning, unless it looks like a symphony packager modulerc
+		if ! grep -q 'MODULES_ALCES_TCL' "$HOME/.modulerc"; then
+		    echo "WARNING: An existing .modulerc was found; please consider merging ${alces_PATH}/etc/modulerc"
+		fi
+	    fi
+	    if [ -f "$HOME/.modulespath" ]; then
+		# found an existing .modulespath, likely to have existing user configuration
+		# check for user gridware path, warn if it's not there
+		if ! grep -q '$HOME/gridware/etc/modules' "$HOME/.modulespath"; then
+		    echo "WARNING: An existing .modulespath was found; please consider merging ${alces_PATH}/etc/modulespath"
+		fi
+	    fi
 	    touch "${alces_PATH}/.alces-suite"
 	fi
 	;;
