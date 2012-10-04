@@ -60,7 +60,7 @@ case $action in
 		# one to a backup file.
 		if ! grep -q 'alces_MODULES_QUIET' "$HOME/.modules"; then
 		    if [ "$(wc -l "$HOME/.modules")" != "1 $HOME/.modules" ]; then
-			echo "WARNING: .modules could not be upgraded; please consider merging ${alces_PATH}/etc/modules"
+			echo "WARNING: An existing .modules was found and could not be upgraded; please consider merging ${alces_PATH}/etc/modules"
 		    else
 			mv "$HOME/.modules" "${alces_PATH}/etc/modules.alcesorig"
 			(head -n13 "${alces_PATH}/etc/modules" && cat "${alces_PATH}/etc/modules.alcesorig" && tail -n+15 "${alces_PATH}/etc/modules") > "$HOME/.modules"
