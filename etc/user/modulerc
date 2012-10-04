@@ -14,4 +14,6 @@ if { [file exists $::env(MODULES_ALCES_TCL)] } {
   if { [file exists ~/.alces/etc/moduleinit ] } {
     alces once { source ~/.alces/etc/moduleinit }
   }
+} else {
+  unset ::env(MODULES_ALCES_TCL)
 }
