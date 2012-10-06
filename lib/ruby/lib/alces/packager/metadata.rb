@@ -101,7 +101,9 @@ module Alces
 
       def file
         f = metadata[:src]
-        if packaged_file?(f)
+        if f.nil?
+          nil
+        elsif packaged_file?(f)
           packaged_file_path(f)
         elsif local_file?(f)
           local_file_path(f)
