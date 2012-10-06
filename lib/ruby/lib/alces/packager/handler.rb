@@ -86,7 +86,7 @@ module Alces
         cols = $terminal.output_cols
         wrap_col = ((cols - 56) * 0.5).floor
         rows = [].tap do |a|
-          metadata.sort.each do |p|
+          definitions.sort.each do |p|
             a << [
                   colored_path(p),
                   (p.metadata[:group] || '<Unknown>').color(:green)
