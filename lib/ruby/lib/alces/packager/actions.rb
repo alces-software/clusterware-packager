@@ -44,6 +44,10 @@ module Alces
             super
           end
         end
+
+        def time_str
+          @time_str ||= Time.now.strftime('%Y%m%d%H%M%S')
+        end
       end
 
       extend Memoist
@@ -182,13 +186,7 @@ EOF
           res = with_temp_file(compilation_script) do |f|
             run('/bin/bash',f)
           end
-          if res.fail?
-            msg = "Package compilation failed"
-            if opts[:verbose]
-              msg << ", error output follows:\n\n" << res.stderr
-            end
-            raise PackageError, msg
-          end
+          handle_failure!(res,'compilation') if res.fail?
         end
         say 'OK'.color(:green)
       end
@@ -199,13 +197,7 @@ EOF
           res = with_temp_file(unpack_script) do |f|
             run('/bin/bash',f)
           end
-          if res.fail?
-            msg = "Package preparation failed"
-            if opts[:verbose]
-              msg << ", error output follows:\n\n" << res.stderr
-            end
-            raise PackageError, msg
-          end
+          handle_failure!(res,'preparation') if res.fail?
         end
         say 'OK'.color(:green)
       end
@@ -221,11 +213,7 @@ EOF
             run('/bin/bash',f)
           end
           if res.fail?
-            msg = "Package analysis failed"
-            if opts[:verbose]
-              msg << ", error output follows:\n\n" << res.stderr
-            end
-            raise PackageError, msg
+            handle_failure!(res,'analysis')
           else
             yaml = res.stdout.chomp
             h = YAML.load(yaml)
@@ -285,13 +273,7 @@ EOF
             res = with_temp_file(prepare_script) do |f|
               run('/bin/bash',f)
             end
-            if res.fail?
-              msg = "Package preparation failed"
-              if opts[:verbose]
-                msg << ", error output follows:\n\n" << res.stderr
-              end
-              raise PackageError, msg
-            end
+            handle_failure!(res,'preparation') if res.fail?
           end
           say 'OK'.color(:green)
         end
@@ -303,13 +285,7 @@ EOF
           res = with_temp_file(installation_script) do |f|
             run('/bin/bash',f)
           end
-          if res.fail?
-            msg = "Package installation failed"
-            if opts[:verbose]
-              msg << ", error output follows:\n\n" << res.stderr
-            end
-            raise PackageError, msg
-          end
+          handle_failure!(res,'installation') if res.fail?
         end
         say 'OK'.color(:green)
       end
@@ -327,7 +303,7 @@ EOF
               h[:compiler_tag] = compiler_tag
               h[:compiler] = compiler_module
             end
-            unless variant_name.nil?
+            unless variant_name.nil? || variant_name == 'default'
               h[:name] = "#{package.name}_#{variant_name}"
             end
           end
@@ -451,7 +427,8 @@ EOF
       end
 
       def download_sources
-        width = (([File.basename(package.file)] + package.sources).map { |x| File.basename(x).length }.max)
+        a = (package.file.nil? ? [] : [File.basename(package.file)])
+        width = ((a + package.sources).map { |x| File.basename(x).length }.max)
         package.each_source do |s|
           if package.packaged_file?(s)
             doing "Packaged --> #{s}#{' ' * (width - s.length)}", width + 17
@@ -723,7 +700,7 @@ EOF
         when Package
           package.path.split('/')
         when Metadata
-          name = variant_name.nil? ? package.name : "#{package.name}_#{variant_name}"
+          name = variant_name.nil? || variant_name == 'default' ? package.name : "#{package.name}_#{variant_name}"
           [(package.type == 'ext' ? package.pkg_type : package.type), name, version, opts[:tag] || generated_tag].compact
         end
       end
@@ -731,6 +708,14 @@ EOF
 
       def build_dir
         @build_dir ||= File.expand_path(File.join(Config.buildroot, package_descriptor))
+      end
+
+      def log_file(name)
+        File.expand_path(File.join(Config.log_root,'builds',package_descriptor,"#{name}.#{self.class.time_str}.log"))
+      end
+
+      def log_files
+        @log_files ||= []
       end
 
       def dest_dir
@@ -834,11 +819,24 @@ end
       end
 
       def redirect(stage)
-        "> >(tee -a alces-#{stage}.log) 2> >(tee -a alces-#{stage}.log >&2)"
+        f = log_file(stage)
+        log_files << f
+        mkdir_p(File.dirname(f))
+        "> >(tee -a #{f}) 2> >(tee -a #{f} >&2)"
       end
 
       def source(f)
         package.source_file(f)
+      end
+
+      def handle_failure!(res, operation)
+        msg = "Package #{operation} failed"
+        msg << "\n\n   Extract of #{operation} script error output:\n   > " << res.stderr.split("\n")[-10..-1].reject{|x| !opts[:verbose] && x[0] == '+'}.map(&:strip).join("\n   > ")
+        latest_log_file = log_files.reverse.find{|f|File.exists?(f)}
+        unless latest_log_file.nil?
+          msg << "\n\n   More information may be available in the log file:\n     #{latest_log_file}"
+        end
+        raise PackageError, msg
       end
     end
   end
