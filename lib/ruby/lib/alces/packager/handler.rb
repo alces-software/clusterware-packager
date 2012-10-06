@@ -153,7 +153,7 @@ module Alces
           end
           puts "Task identifier: #{task}"
         else
-          if metadata.metadata[:variants] && variant.nil?
+          if metadata.metadata[:variants] && variant == 'all'
             metadata.metadata[:variants].keys.each do |v|
               Actions.install(metadata, action_opts(:install).merge(variant: v), IoHandler)
             end
@@ -324,7 +324,9 @@ module Alces
         if metadata.metadata[:variants].nil? || metadata.metadata[:variants].empty?
           raise InvalidSelectionError, "Invalid variant '#{variant}' for package '#{metadata.name}' - this package has no variants." if variant
         elsif !variant.nil?
-          raise InvalidSelectionError, "Invalid variant '#{variant}' for package '#{metadata.name}' - please choose from: #{metadata.variants.keys.join(', ')}" unless metadata.variants.include?(variant)
+          raise InvalidSelectionError, "Invalid variant '#{variant}' for package '#{metadata.name}' - please choose from: #{metadata.variants.keys.join(', ')}" unless variant == 'all' || metadata.variants.include?(variant)
+        elsif variant.nil?
+          raise InvalidSelectionError, "Select a variant to build for package '#{metadata.name}' - please choose from: #{metadata.variants.keys.join(', ')} (or pass 'all' to build all variants)"
         end
       end
 
