@@ -217,7 +217,9 @@ EOF
           else
             yaml = res.stdout.chomp
             h = YAML.load(yaml)
-            if h[:failure]
+            if h == false
+              # no output, assume nothing to do
+            elsif h[:failure]
               raise PackageError, h[:failure]
             else
               h.each do |k,v|
