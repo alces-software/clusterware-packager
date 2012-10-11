@@ -628,7 +628,7 @@ EOF
 set -x
 set -o pipefail
 set -o errexit
-cd #{working_dir}
+cd "#{working_dir}"
 <%= modules %>
 EOF
       end
