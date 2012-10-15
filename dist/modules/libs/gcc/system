@@ -10,8 +10,8 @@ if { [info exists ::env(ALCES_TRACE)] } {
 }
 
 if { [namespace exists alces] == 0 } {
-    if { [info exists ::env(ALCES_TCL)] } { 
-	source $::env(ALCES_TCL)
+    if { [info exists ::env(MODULES_ALCES_TCL)] } { 
+	source $::env(MODULES_ALCES_TCL)
     } else {
 	# compatibility mode for module use without availability of Alces tools
 	proc ::process {body} { eval $body }
