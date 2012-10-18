@@ -232,11 +232,11 @@ module Alces
         end
 
         def caps_name
-          name.upcase.tr('-','_')
+          name.upcase.tr('-+','_')
         end
 
         def package_specifics
-          metadata.module rescue nil
+          metadata.module_content rescue nil
         end
 
         def package_dependencies
@@ -384,11 +384,11 @@ EOF
         end
 
         def package_specifics
-          metadata.module[:compiler] rescue nil
+          metadata.module_content[:compiler] rescue nil
         end
 
         def library_specifics
-          metadata.module[:runtime] rescue nil
+          metadata.module_content[:runtime] rescue nil
         end
 
         def library_modulefile_name

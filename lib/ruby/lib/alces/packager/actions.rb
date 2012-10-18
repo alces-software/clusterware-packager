@@ -310,10 +310,19 @@ EOF
           if package.type == 'ext'
             module_opts[:version] = version
             package.modules.each do |defn|
-              package.metadata[:module] = defn[:content]
+              package.metadata[:module_content] = ERB.new(defn[:content]).result(binding)
               ModuleTree.set(package, module_opts.merge(type: defn[:type]))
             end
           else
+            if package.metadata[:module].is_a?(Hash)
+              package.metadata[:module_content] = {}.tap do |h|
+                package.metadata[:module].each do |k,v|
+                  h[k] = ERB.new(v).result(binding)
+                end
+              end
+            else
+              package.metadata[:module_content] = ERB.new(package.metadata[:module]).result(binding)
+            end
             ModuleTree.set(package, module_opts)
           end
         end
