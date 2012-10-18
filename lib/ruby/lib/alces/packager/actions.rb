@@ -222,9 +222,7 @@ EOF
             elsif h[:failure]
               raise PackageError, h[:failure]
             else
-              h.each do |k,v|
-                instance_variable_set("@#{k}",v)
-              end
+              @analysis_opts = h
               unmemoize_all
             end
           end
@@ -633,8 +631,12 @@ cd "#{working_dir}"
 EOF
       end
 
+      def analysis_opts
+        @analysis_opts ||= {}
+      end
+
       def version
-        @version || package.version
+        analysis_opts[:version] || package.version
       end
 
       def compiler_type
