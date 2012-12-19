@@ -48,6 +48,20 @@ if [ "$UID" = "0" -a "${alces_MODE}" = "system" -o "${alces_MODE}" = "user" ]; t
     fi
 fi
 
+alces_silence_modules() {
+    export alces_MODULES_QUIET_ORIGINAL=${alces_MODULES_QUIET}
+    export alces_MODULES_QUIET=1
+}
+
+alces_desilence_modules() {
+    if [ "${alces_MODULES_QUIET_ORIGINAL}" ]; then
+	export alces_MODULES_QUIET=${alces_MODULES_QUIET_ORIGINAL}
+    else
+	unset alces_MODULES_QUIET
+    fi
+    unset alces_MODULES_QUIET_ORIGINAL
+}
+
 # Source modules from home directory
 if [ -f ~/.modules ]; then
     source ~/.modules
