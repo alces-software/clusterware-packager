@@ -285,6 +285,7 @@ module Alces
           a = args.dup
           while param = a.shift do
             k,v = param.split('=')
+            raise InvalidParameterError, "No value found for parameter '#{k}' -- did you forget the '='?" if v.nil?
             params[k.to_sym] = v
           end
           metadata.validate_params!(params)
