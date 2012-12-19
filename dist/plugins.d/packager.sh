@@ -5,7 +5,7 @@
 ##
 ################################################################################
 if [ "$UID" != "0" ]; then
-    if [ "${alces_MODE}" = "system" -a ! -f "${alces_PATH}/.alces-suite" ]; then
+    if [ "${alces_MODE}" = "system" -a ! -f "$HOME/.alces/.alces-suite" ]; then
         /opt/alces/bin/alces config install
     fi
     for a in modules modulerc modulespath; do
