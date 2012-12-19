@@ -132,9 +132,7 @@ proc ::prereq {module} {
 }
 
 proc ::process {body} {
-    if { [alces getenv alces_MODULES_QUIET 0] } {
-	eval $body
-    } {
+    if { [alces getenv alces_MODULES_VERBOSE 0] } {
 	variable ok
 	set original_branch [alces getenv alces_INTERNAL_BRANCH]
 	set original_trunk [alces getenv alces_INTERNAL_TRUNK]
@@ -153,6 +151,8 @@ proc ::process {body} {
 	    puts stderr "[alces getenv alces_INTERNAL_TRUNK] |\n[alces getenv alces_INTERNAL_TRUNK] $ok"
 	    unset ::env(alces_INTERNAL_PROCESSING)
 	}
+    } {
+	eval $body
     }
 }
 
@@ -251,7 +251,7 @@ proc ::depend {module {version ""} {specific ""}} {
                 exit 1
             }
 
-	    if { ! [alces getenv alces_MODULES_QUIET 0] } {
+	    if { [alces getenv alces_MODULES_VERBOSE 0] } {
 		puts -nonewline stderr "[alces getenv alces_INTERNAL_BRANCH]"
 		if { $using_fallback } {
 		    puts -nonewline stderr "$alt "
@@ -276,7 +276,7 @@ proc ::depend {module {version ""} {specific ""}} {
                 set ::env(alces_INTERNAL_RESULT) "prerequisite not met ($m)"
                 exit 1
             }
-	    if { ! [alces getenv alces_MODULES_QUIET 0] } {
+	    if { [alces getenv alces_MODULES_VERBOSE 0] } {
 		puts stderr "${msg}"
 	    }
         }
