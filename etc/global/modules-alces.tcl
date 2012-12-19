@@ -22,7 +22,7 @@ namespace eval ::alces {
     }
 
     proc pretty {module} {
-        if {[alces getenv alces_COLOUR 1]} {
+        if {[alces getenv alces_COLOUR 0]} {
             set p [split $module "/"]
             set reset {[0m}
             set s ""
@@ -84,7 +84,7 @@ namespace eval ::alces {
 
 interp hide {} conflict module-conflict
 interp hide {} prereq module-prereq
-if {[alces getenv alces_COLOUR 1]} {
+if {[alces getenv alces_COLOUR 0]} {
     set ok {[0;32mOK[0m}
     set skipped {[0;33mSKIPPED[0m}
     set failed {[0;31mFAILED[0m}
