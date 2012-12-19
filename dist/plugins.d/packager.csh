@@ -68,6 +68,13 @@ endif
 
 alias mod 'module'
 
+alias alces_silence_modules 'setenv alces_MODULES_VERBOSE_ORIGINAL "$alces_MODULES_VERBOSE"; setenv alces_MODULES_VERBOSE 1'
+alias alces_desilence_modules 'setenv alces_MODULES_VERBOSE "$alces_MODULES_VERBOSE_ORIGINAL"; unsetenv alces_MODULES_VERBOSE_ORIGINAL'
+
+if (! $?alces_MODULES_VERBOSE ) then
+    setenv alces_MODULES_VERBOSE 1
+endif
+
 #source modules file from home dir
 if ( -r ~/.modules ) then
   source ~/.modules

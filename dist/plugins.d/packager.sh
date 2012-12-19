@@ -5,7 +5,7 @@
 ##
 ################################################################################
 if [ "$UID" != "0" ]; then
-    if [ "${alces_MODE}" = "system" -a ! -f "$HOME/.alces/.alces-suite" ]; then
+    if [ "${alces_MODE}" = "system" -a ! -f "${alces_PATH}/.alces-suite" ]; then
         /opt/alces/bin/alces config install
     fi
     for a in modules modulerc modulespath; do
@@ -46,6 +46,24 @@ if [ "$UID" = "0" -a "${alces_MODE}" = "system" -o "${alces_MODE}" = "user" ]; t
         alces packager update base
         date +%s > "${alces_PATH}/var/lib/packager/repos/base/.last-update"
     fi
+fi
+
+alces_silence_modules() {
+    export alces_MODULES_VERBOSE_ORIGINAL=${alces_MODULES_VERBOSE}
+    export alces_MODULES_VERBOSE=1
+}
+
+alces_desilence_modules() {
+    if [ "${alces_MODULES_VERBOSE_ORIGINAL}" ]; then
+	export alces_MODULES_VERBOSE=${alces_MODULES_VERBOSE_ORIGINAL}
+    else
+	unset alces_MODULES_VERBOSE
+    fi
+    unset alces_MODULES_VERBOSE_ORIGINAL
+}
+
+if [ -z "${alces_MODULES_VERBOSE}" ]; then
+    export alces_MODULES_VERBOSE=1
 fi
 
 # Source modules from home directory
