@@ -197,36 +197,5 @@ fi;;
         fi
     }
 
-    _alces() {
-        local cur="$2" prev="$3" cmds opts
-
-        COMPREPLY=()
-
-        cmds="attach config help hub message module packager session"
-
-        if ((COMP_CWORD == 1)); then
-            COMPREPLY=( $(compgen -W "$cmds" -- "$cur") )
-        else
-            case "${COMP_WORDS[1]}" in
-                p*)
-                    _alces_packager "$cur" "$prev"
-                    ;;
-                mo*)
-                    unset COMP_WORDS[0]
-                    COMP_CWORD=$(($COMP_CWORD-1))
-                    _module "module" "$cur" "$prev"
-                    ;;
-                *) 
-                    case "$cur" in
-                        *)
-                            COMPREPLY=( $(compgen -W "$cmds" -- "$cur") )
-                            ;;
-                    esac
-                    ;;
-            esac
-        fi
-    }
-
     complete -o default -F _module module mod
-    complete -o default -F _alces alces al
 fi
