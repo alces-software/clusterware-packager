@@ -50,7 +50,7 @@ fi
 
 alces_silence_modules() {
     export alces_MODULES_VERBOSE_ORIGINAL=${alces_MODULES_VERBOSE}
-    export alces_MODULES_VERBOSE=1
+    export alces_MODULES_VERBOSE=0
 }
 
 alces_desilence_modules() {
