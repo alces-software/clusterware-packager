@@ -10,7 +10,7 @@ if [ "$UID" != "0" ]; then
     fi
     for a in modules modulerc modulespath; do
 	if [ ! -f "$HOME/.$a" ]; then
-	    ln -s "$HOME/.alces/etc/$a" "$HOME/.$a"
+	    ln -s ".alces/etc/$a" "$HOME/.$a"
 	fi
     done
 else

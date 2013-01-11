@@ -10,7 +10,7 @@ if ( $uid != "0" ) then
     endif
     foreach a ( modules modulerc modulespath )
 	if ( ! -f "$HOME/.$a" ) then
-	    ln -s "$HOME/.alces/etc/$a" "$HOME/.$a"
+	    ln -s ".alces/etc/$a" "$HOME/.$a"
 	endif
     end
 else
