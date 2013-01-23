@@ -310,8 +310,25 @@ EOF
           if package.type == 'ext'
             module_opts[:version] = version
             package.modules.each do |defn|
-              package.metadata[:module_content] = ERB.new(defn[:content]).result(binding)
-              ModuleTree.set(package, module_opts.merge(type: defn[:type]))
+              if defn[:content].is_a?(Hash)
+                package.metadata[:module_content] = {}.tap do |h|
+                  defn[:content].each do |k,v|
+                    h[k] = ERB.new(v).result(binding)
+                  end
+                end
+              else
+                package.metadata[:module_content] = ERB.new(defn[:content]).result(binding)
+              end
+              defn_opts = {}.tap do |h|
+                h[:type] = defn[:type]
+                if defn.key?(:name)
+                  h[:name] = defn[:name]
+                  h[:version] = analysis_opts[:"#{defn[:name]}_version"] if analysis_opts.key?(:"#{defn[:name]}_version")
+                end
+                h[:tag] = defn[:tag] if defn.key?(:tag)
+                h[:tag] = nil if defn[:type] == 'compilers'
+              end
+              ModuleTree.set(package, module_opts.merge(defn_opts))
             end
           else
             if package.metadata[:module].is_a?(Hash)
@@ -695,10 +712,10 @@ EOF
           end
         end
         if constituents.empty?
-          if compilerless?
-            compiler_type
-          elsif compiler?
+          if compiler?
             nil
+          elsif compilerless?
+            compiler_type
           else
             'dist'
           end
