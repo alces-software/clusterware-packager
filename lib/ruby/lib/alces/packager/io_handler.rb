@@ -77,7 +77,9 @@ module Alces
               s << "/#{p.version.color(*PRIM)}" unless p.version.blank?
             end
           when Package
-            "#{p.type.color(:magenta)}/#{p.name.color(*COMP)}/#{p.version.color(*PRIM)}/#{p.tag.color(*SEC1)}"
+            "#{p.type.color(:magenta)}/#{p.name.color(*COMP)}/#{p.version.color(*PRIM)}".tap do |s|
+              s << "/#{p.tag.color(*SEC1)}" unless p.tag.blank?
+            end
           when String
             parts = p.split('/')
             "#{parts[0].color(:magenta)}".tap do |s|
