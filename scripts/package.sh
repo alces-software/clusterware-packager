@@ -1,5 +1,7 @@
 #!/bin/bash
-DIR=$(cd `dirname $0` && pwd)
+set -x
+cd `dirname $0`
+DIR=$(pwd)
 cd $DIR/..
 git archive master > packager.tar
 if [ -x $(which gnutar 2> /dev/null) ]; then

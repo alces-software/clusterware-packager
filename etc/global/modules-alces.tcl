@@ -131,24 +131,12 @@ proc ::prereq {module} {
     }
 }
 
-package require http
-package require base64
-proc ::httpCallback {token} {
-    global httpState
-    upvar #0 $token req
-    set httpState $req(status)
-    ::http::cleanup $token
-}
-
 proc ::process {body} {
-    variable original_processing
-    global httpState
-
+    set original_processing 0
     if { [alces getenv alces_MODULES_VERBOSE 0] } {
 	variable ok
 	set original_branch [alces getenv alces_INTERNAL_BRANCH]
 	set original_trunk [alces getenv alces_INTERNAL_TRUNK]
-	set original_processing 0
 	processing
 	if { [info exists ::env(alces_INTERNAL_PROCESSING)] == 0 } {
 	    set ::env(alces_INTERNAL_PROCESSING) true
@@ -164,7 +152,6 @@ proc ::process {body} {
 	    unset ::env(alces_INTERNAL_PROCESSING)
 	}
     } {
-	set original_processing 0
 	if { [info exists ::env(alces_INTERNAL_PROCESSING)] == 0 } {
 	    set ::env(alces_INTERNAL_PROCESSING) true
 	    set original_processing 1
@@ -184,24 +171,14 @@ proc ::process {body} {
 	}
 
 	if { [info exists original_processing] && $original_processing == 1 } {
-	    set url http://localhost:8080/modules?u=$::env(USER)&m=[::base64::encode -wrapchar "" $::env(alces_LOADED_MODULES)]
-	    if { [catch {
-		set token [::http::geturl $url -command httpCallback]
-		after 100 set httpState timeout
-	    }] } {
-		set httpState fail
+	    catch {
+		set t [clock clicks -milliseconds]
+		set filename /opt/gridware/etc/.access/$t.$::env(USER).[pid].txt
+		set fileId [open $filename "w"]
+		puts $fileId "$t [pid] $::env(USER) $::env(alces_LOADED_MODULES)"
+		close $fileId
 	    }
-	    if { [info exists httpState] == 0 } {
-		vwait httpState
-	    }
-	    switch $httpState {
-		complete {
-		    puts stderr "yay"
-		}
-		default {
-		    puts stderr "failed: $httpState"
-		}
-	    }
+	    unset ::env(alces_LOADED_MODULES)
 	}
     }
 }

@@ -67,6 +67,7 @@ module Alces
 
         def resolve_for_version(packages, op, version)
           if op.nil?
+            # XXX - this doesn't take into account what version has been set as the default...
             packages.first
           else
             matcher = case op
