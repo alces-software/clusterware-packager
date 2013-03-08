@@ -50,6 +50,8 @@ fi
 
 alces_silence_modules() {
     export alces_MODULES_VERBOSE_ORIGINAL=${alces_MODULES_VERBOSE}
+    export alces_MODULES_RECORD_ORIGINAL=${alces_MODULES_RECORD}
+    export alces_MODULES_RECORD=0
     export alces_MODULES_VERBOSE=0
 }
 
@@ -60,6 +62,12 @@ alces_desilence_modules() {
 	unset alces_MODULES_VERBOSE
     fi
     unset alces_MODULES_VERBOSE_ORIGINAL
+    if [ "${alces_MODULES_RECORD_ORIGINAL}" ]; then
+	export alces_MODULES_RECORD=${alces_MODULES_RECORD_ORIGINAL}
+    else
+	unset alces_MODULES_RECORD
+    fi
+    unset alces_MODULES_RECORD_ORIGINAL
 }
 
 if [ -z "${alces_MODULES_VERBOSE}" ]; then
