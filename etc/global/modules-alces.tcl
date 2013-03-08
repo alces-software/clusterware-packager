@@ -162,7 +162,7 @@ proc ::process {body} {
 	}
     }
 
-    if { [module-info mode load] } {
+    if { [module-info mode load] && ( [info exists ::env(alces_MODULES_RECORD)] == 0 || $::env(alces_MODULES_RECORD) != 0 ) } {
 	set m [module-info name]
 	if { [info exists ::env(alces_LOADED_MODULES)] == 0 } {
 	    set ::env(alces_LOADED_MODULES) $m
