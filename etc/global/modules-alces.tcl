@@ -131,7 +131,19 @@ proc ::prereq {module} {
     }
 }
 
+package require http
+package require base64
+proc ::httpCallback {token} {
+    global httpState
+    upvar #0 $token req
+    set httpState $req(status)
+    ::http::cleanup $token
+}
+
 proc ::process {body} {
+    variable original_processing
+    global httpState
+
     if { [alces getenv alces_MODULES_VERBOSE 0] } {
 	variable ok
 	set original_branch [alces getenv alces_INTERNAL_BRANCH]
@@ -152,7 +164,45 @@ proc ::process {body} {
 	    unset ::env(alces_INTERNAL_PROCESSING)
 	}
     } {
+	set original_processing 0
+	if { [info exists ::env(alces_INTERNAL_PROCESSING)] == 0 } {
+	    set ::env(alces_INTERNAL_PROCESSING) true
+	    set original_processing 1
+	}
 	eval $body
+	if { [module-info mode load] && $original_processing == 1 } {
+	    unset ::env(alces_INTERNAL_PROCESSING)
+	}
+    }
+
+    if { [module-info mode load] } {
+	set m [module-info name]
+	if { [info exists ::env(alces_LOADED_MODULES)] == 0 } {
+	    set ::env(alces_LOADED_MODULES) $m
+	} else {
+	    set ::env(alces_LOADED_MODULES) $::env(alces_LOADED_MODULES):$m
+	}
+
+	if { [info exists original_processing] && $original_processing == 1 } {
+	    set url http://localhost:8080/modules?u=$::env(USER)&m=[::base64::encode -wrapchar "" $::env(alces_LOADED_MODULES)]
+	    if { [catch {
+		set token [::http::geturl $url -command httpCallback]
+		after 100 set httpState timeout
+	    }] } {
+		set httpState fail
+	    }
+	    if { [info exists httpState] == 0 } {
+		vwait httpState
+	    }
+	    switch $httpState {
+		complete {
+		    puts stderr "yay"
+		}
+		default {
+		    puts stderr "failed: $httpState"
+		}
+	    }
+	}
     }
 }
 
@@ -180,7 +230,9 @@ proc ::processing {} {
     variable ok
     variable skipped
     variable alt
+
     set m [module-info name]
+
     if { [module-info mode load] } {
         if { [info exists ::env(alces_INTERNAL_PROCESSING)] == 0 } {
             puts -nonewline stderr "[alces getenv alces_INTERNAL_BRANCH][alces pretty ${m}]"
