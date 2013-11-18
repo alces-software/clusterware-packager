@@ -84,7 +84,7 @@ if [ "$BASH_VERSION" ]; then
 # Bash commandline completion (bash 3.0 and above) for Modules 3.2.9
 #
     _module_avail() {
-        "/opt/alces/core/Modules/bin/modulecmd" bash -t avail 2>&1 | sed '
+        "/opt/alces/opt/Modules/bin/modulecmd" bash -t avail 2>&1 | sed '
                 /:$/d;
                 /:ERROR:/d;
                 s#^\(.*\)/\(.\+\)(default)#\1\n\1\/\2#;
@@ -93,7 +93,7 @@ if [ "$BASH_VERSION" ]; then
     }
 
     _module_avail_specific() {
-        "/opt/alces/core/Modules/bin/modulecmd" bash -t avail 2>&1 | sed '
+        "/opt/alces/opt/Modules/bin/modulecmd" bash -t avail 2>&1 | sed '
                 /:$/d;
                 /:ERROR:/d;
                 s#^\(.*\)/\(.\+\)(default)#\1\/\2#;
