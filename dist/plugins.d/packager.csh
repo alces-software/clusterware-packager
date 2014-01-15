@@ -1,7 +1,7 @@
 ################################################################################
 ##
 ## Alces HPC Software Stack - Symphony shell configuration
-## Copyright (c) 2008-2012 Alces Software Ltd
+## Copyright (c) 2008-2014 Alces Software Ltd
 ##
 ################################################################################
 if ( $uid != "0" ) then
@@ -68,8 +68,12 @@ endif
 
 alias mod 'module'
 
+if (! $?alces_MODULES_RECORD ) then
+  setenv alces_MODULES_RECORD 0
+endif
+
 alias alces_silence_modules 'setenv alces_MODULES_VERBOSE_ORIGINAL "$alces_MODULES_VERBOSE"; setenv alces_MODULES_VERBOSE 0; setenv alces_MODULES_RECORD_ORIGINAL "$alces_MODULES_RECORD"; setenv alces_MODULES_RECORD 0'
-alias alces_desilence_modules 'setenv alces_MODULES_VERBOSE "$alces_MODULES_VERBOSE_ORIGINAL"; unsetenv alces_MODULES_VERBOSE_ORIGINAL; setenv alces_MODULES_VERBOSE "$alces_MODULES_VERBOSE_ORIGINAL"; unsetenv alces_MODULES_RECORD_ORIGINAL'
+alias alces_desilence_modules 'setenv alces_MODULES_VERBOSE "$alces_MODULES_VERBOSE_ORIGINAL"; unsetenv alces_MODULES_VERBOSE_ORIGINAL; setenv alces_RECORD_VERBOSE "$alces_MODULES_RECORD_ORIGINAL"; unsetenv alces_MODULES_RECORD_ORIGINAL'
 
 if (! $?alces_MODULES_VERBOSE ) then
     setenv alces_MODULES_VERBOSE 1
