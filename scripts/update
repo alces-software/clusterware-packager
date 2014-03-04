@@ -9,29 +9,29 @@ alces_BASE_REPO_PATH=http://grover.alces-software.com/git/alces-packager-base
 trap "/bin/kill -- -$BASHPID &>/dev/null" EXIT INT TERM
 
 function toggle_spin () {
-	if [ -z "$spin_pid" ]; then
-	    (
-		i=1
-		sp="/-\|"
-		printf " "
-		while true;
-		do
-		    printf "\b[1m${sp:i++%${#sp}:1}[0m"
-		    if [[ i -eq ${#sp} ]]; then
-			i=0
-		    fi
-		    sleep 0.2
-		done
-	    ) &
-	    sleep 1
-	    spin_pid=$!
-	else
-	    sleep 1
-	    kill $spin_pid
-	    wait $spin_pid 2>/dev/null
-	    printf "\b"
-	    unset spin_pid
-	fi
+        if [ -z "$spin_pid" ]; then
+            (
+                i=1
+                sp="/-\|"
+                printf " "
+                while true;
+                do
+                    printf "\b[1m${sp:i++%${#sp}:1}[0m"
+                    if [[ i -eq ${#sp} ]]; then
+                        i=0
+                    fi
+                    sleep 0.2
+                done
+            ) &
+            sleep 1
+            spin_pid=$!
+        else
+            sleep 1
+            kill $spin_pid
+            wait $spin_pid 2>/dev/null
+            printf "\b"
+            unset spin_pid
+        fi
 }
 
 function title() {
@@ -40,9 +40,9 @@ function title() {
 
 function doing() {
     if [ -z "$2" ]; then
-	pad=12
+        pad=12
     else
-	pad=$2
+        pad=$2
     fi
     printf "    [36m%${pad}s[0m ... " "$1"
     toggle_spin
@@ -51,10 +51,10 @@ function doing() {
 function say_done () {
     toggle_spin
     if [ $1 -gt 0 ]; then
-	echo '[31mFAIL[0m'
-	exit 1
+        echo '[31mFAIL[0m'
+        exit 1
     else
-	echo '[32mOK[0m '
+        echo '[32mOK[0m '
     fi
 }
 
@@ -103,7 +103,7 @@ if (( UID == 0 )); then
 else
     alces_GRIDWARE="${HOME}/gridware"
 fi
-mkdir -p "${alces_GRIDWARE}/pkg" "${alces_GRIDWARE}/etc/modules" "${alces_GRIDWARE}/etc"
+mkdir -p "${alces_GRIDWARE}/pkg" "${alces_GRIDWARE}/etc/modules" "${alces_GRIDWARE}/etc" "${alces_GRIDWARE}/etc/packager"
 doing 'Configure'
 cp -r "${alces_SRC_PATH}/${NAME}/dist/modules"/* "${alces_GRIDWARE}/etc/modules"
 cp -r "${alces_SRC_PATH}/${NAME}/dist/plugins.d"/* "${alces_PATH}/etc/${BASENAME}/plugins.d"

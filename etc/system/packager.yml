@@ -1,12 +1,12 @@
 ---
-:log_root: /opt/alces/var/log/packager
+:log_root: /var/log/alces/packager
 :repo_paths:
  - /opt/alces/var/lib/packager/repos/base
  - /opt/gridware/etc/repos/local
 :gridware: /opt/gridware
 :modules_dir: /opt/gridware/etc/modules
 :packages_dir: /opt/gridware/pkg
-:archives_dir: /opt/alces/var/cache/packager/archives
+:archives_dir: /usr/src/alces/packager/archives
 :local_archives_dir: /opt/gridware/src
-:buildroot: /opt/alces/var/cache/packager/src
-:dbroot: /opt/alces/var/lib/packager
+:buildroot: /usr/src/alces/packager/src
+:dbroot: /opt/gridware/etc/packager
