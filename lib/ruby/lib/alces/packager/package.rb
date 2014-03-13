@@ -23,6 +23,7 @@
 #                                                                              #
 ################################################################################
 require 'alces/packager/dao'
+require 'alces/packager/semver'
 require 'alces/tools/core_ext/module/delegation'
 require 'dm-aggregates'
 require 'digest/md5'
@@ -88,11 +89,25 @@ module Alces
                         split = version.split('.')[0..-2]
                         lower_bound = split.join('.')
                         upper_bound = split.tap { |a| a[-1] = a[-1].to_i + 1 }.join('.')
-                        lambda { |p| p.version >= lower_bound && p.version <= upper_bound }
+                        lambda do |p|
+                begin
+                  p_semver = Semver.new(p.version)
+                  p_semver.satisfies("~ #{lower_bound}.*") &&
+                    p_semver.satisfies("<= #{upper_bound}")
+                rescue ArgumentError
+                  p.version >= lower_bound && p.version <= upper_bound
+                end
+              end
                       else
                         raise 'Invalid requirement operator: #{op}'
                       end
-            packages.sort { |a,b| b.version <=> a.version }.find(&matcher)
+            packages.sort do |a,b|
+              begin
+                Semver.new(b.version) <=> Semver.new(a.version)
+              rescue
+                b.version <=> a.version
+              end
+            end.find(&matcher)
           end
         end
         
