@@ -811,7 +811,18 @@ EOF
             modules << [descriptor, p]
           end
         end
-        supplied.map{|r| [r, Package.resolve(r,compiler_tag)]} + modules
+        overridden = supplied.map{|r| [r, Package.resolve(r,compiler_tag)]} + modules
+        # Remove any remaining duplicates
+        s = []
+        overridden.map do |r, p|
+          prefix = "#{p.type}/#{p.name}"
+          if ! s.include?(prefix)
+            s << prefix
+            [r,p]
+          else
+            nil
+          end
+        end.compact
       end
 
       def required_modules
