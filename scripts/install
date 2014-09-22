@@ -3,7 +3,7 @@
 BASENAME=symphony
 NAME=packager
 
-alces_modules_version=3.2.9
+alces_modules_version=3.2.10
 alces_BASE_REPO_PATH=http://grover.alces-software.com/git/alces-packager-base
 
 # ensure all children die when we do
@@ -94,7 +94,7 @@ if [ -d "${alces_PATH}/opt/Modules" ]; then
 else
     cd "${alces_SRC_PATH}"
     doing 'Extract'
-    tar xzf "${alces_ARCHIVES_PATH}/modules-${alces_modules_version}c.tar.gz"
+    tar xzf "${alces_ARCHIVES_PATH}/modules-${alces_modules_version}.tar.gz"
     say_done $?
     cd modules-${alces_modules_version}
     doing 'Configure'
