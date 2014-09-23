@@ -4,7 +4,9 @@ cd `dirname $0`
 DIR=$(pwd)
 cd $DIR/..
 git archive master > packager.tar
-if [ -x $(which gnutar 2> /dev/null) ]; then
+if [ -x $(which gtar 2> /dev/null) ]; then
+    TAR=gtar
+elif [ -x $(which gnutar 2> /dev/null) ]; then
     TAR=gnutar
 else
     TAR=tar
