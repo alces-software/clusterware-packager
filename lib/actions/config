@@ -1,0 +1,94 @@
+: '
+: NAME: config
+: SYNOPSIS: Install and configure environment
+: VERSION: 1.0.0
+: '
+################################################################################
+# (c) Copyright 2007-2012 Alces Software Ltd & Stephen F Norledge.             #
+#                                                                              #
+# Symphony - Operating System Content Deployment Framework                     #
+#                                                                              #
+# This file/package is part of Symphony                                        #
+#                                                                              #
+# Symphony is free software: you can redistribute it and/or modify it under    #
+# the terms of the GNU Affero General Public License as published by the Free  #
+# Software Foundation, either version 3 of the License, or (at your option)    #
+# any later version.                                                           #
+#                                                                              #
+# Symphony is distributed in the hope that it will be useful, but WITHOUT      #
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or        #
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License #
+# for more details.                                                            #
+#                                                                              #
+# You should have received a copy of the GNU Affero General Public License     #
+# along with Symphony.  If not, see <http://www.gnu.org/licenses/>.            #
+#                                                                              #
+# For more information on the Symphony Toolkit, please visit:                  #
+# http://www.alces-software.org/symphony                                       #
+#                                                                              #
+################################################################################
+action=$1
+shift
+
+case $action in
+    install)
+	us=`basename $0`
+	if [ -f "$HOME/.alces/.alces-suite" ]; then
+	    echo "$alces_BINNAME $us: alces tools already configured in '$HOME/.alces'."
+	elif [ "$UID" == "0" ]; then
+	    echo "$alces_BINNAME $us: refusing to configure alces tools for root user."
+	elif [ ! -d "/opt/alces/opt/${alces_SUITENAME}" ]; then
+	    echo "$alces_BINNAME $us: alces tools is not installed with a system-wide configuration."
+	else
+	    mkdir -p "$HOME/gridware/pkg" "$HOME/gridware/etc/modules"
+	    alces_PATH="$HOME/.alces"
+            # Make directories
+	    for a in etc var/log/packager var/spool var/spool/tasks var/lib/packager; do
+		[[ -d "${alces_PATH}/${a}" ]] || mkdir -p "${alces_PATH}/${a}"
+	    done
+            # Create initial configuration files
+	    cp -r "/opt/alces/etc/skel"/* "${alces_PATH}/etc"
+	    if [ -d "$HOME/gridware/etc/repos" ]; then
+		rm -rf "${alces_PATH}/etc/repos"
+	    else
+		mv "${alces_PATH}/etc/repos" "$HOME/gridware/etc"
+	    fi
+	    if [ -f "$HOME/.modules" ]; then
+		# found an existing .modules, likely to have existing user configuration
+		# Perform a more intelligent upgrade of this file by
+		# manipulating $alces_PATH/etc/modules and moving this
+		# one to a backup file.
+		if ! grep -q 'alces_MODULES_QUIET' "$HOME/.modules"; then
+		    if [ "$(wc -l "$HOME/.modules")" != "1 $HOME/.modules" ]; then
+			echo "WARNING: An existing .modules was found and could not be upgraded; please consider merging ${alces_PATH}/etc/modules"
+		    else
+			mv "$HOME/.modules" "${alces_PATH}/etc/modules.alcesorig"
+			(head -n13 "${alces_PATH}/etc/modules" && cat "${alces_PATH}/etc/modules.alcesorig" && tail -n+15 "${alces_PATH}/etc/modules") > "$HOME/.modules"
+		    fi
+		fi
+	    fi
+	    if [ -f "$HOME/.modulerc" ]; then
+		# found an existing .modulerc, likely to have existing user configuration
+		# emit a warning, unless it looks like a symphony packager modulerc
+		if ! grep -q 'MODULES_ALCES_TCL' "$HOME/.modulerc"; then
+		    echo "WARNING: An existing .modulerc was found; please consider merging ${alces_PATH}/etc/modulerc"
+		fi
+	    fi
+	    if [ -f "$HOME/.modulespath" ]; then
+		# found an existing .modulespath, likely to have existing user configuration
+		# check for user gridware path, warn if it's not there
+		if ! grep -q '$HOME/gridware/etc/modules' "$HOME/.modulespath"; then
+		    echo "WARNING: An existing .modulespath was found; please consider merging ${alces_PATH}/etc/modulespath"
+		fi
+	    fi
+	    touch "${alces_PATH}/.alces-suite"
+	fi
+	;;
+    help|hel|he|h|--help|-h|'')
+        display_help $0
+	;;
+    *)
+	us=`basename $0`
+	echo "$alces_BINNAME $us: '$action' is not a known command. See '$alces_BINNAME $us --help'."
+	;;
+esac

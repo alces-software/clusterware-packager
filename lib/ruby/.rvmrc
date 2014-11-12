@@ -1,0 +1,1 @@
+rvm ruby-1.9.3 &>/dev/null || rvm ruby-1.9.3-perf &> /dev/null
