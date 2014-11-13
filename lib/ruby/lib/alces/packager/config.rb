@@ -25,13 +25,6 @@
 require 'yaml'
 require 'alces/tools/config'
 module Alces
-  module Tools
-    module Config
-      DEFAULT_CONFIG_PATH = '~/.alces/etc/:/etc/alces:/etc/opt/alces/:/opt/clusterware/etc:/opt/gridware/etc/opt/alces'
-    end
-  end
-end
-module Alces
   module Packager
     module Config
       DEFAULT_CONFIG = {
