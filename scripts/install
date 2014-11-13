@@ -84,7 +84,7 @@ say_done $?
 
 title "Installing OS dependencies"
 doing 'yum'
-yum -e 0 -y install tcl-devel
+yum -e 0 -y install tcl-devel &>"${alces_PATH}/${LOGDIR}/yuminstall.log"
 say_done $?
 
 # Compile and install third party utilities
