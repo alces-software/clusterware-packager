@@ -82,6 +82,11 @@ else
 fi
 say_done $?
 
+title "Installing OS dependencies"
+doing 'yum'
+yum -e 0 -y install tcl-devel
+say_done $?
+
 # Compile and install third party utilities
 if [ -d "${alces_SRC_PATH}/${NAME}/archives" ]; then
   cp "${alces_SRC_PATH}/${NAME}/archives"/* "${alces_ARCHIVES_PATH}"
