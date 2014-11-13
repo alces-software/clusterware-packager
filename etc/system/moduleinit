@@ -8,5 +8,5 @@ if { [info exists ::env(ALCES_TRACE)] } {
     puts stderr " -> $::ModulesCurrentModulefile"
 }
 
-catch {exec /opt/alces/bin/alces module aliases} alces_aliases
+catch {exec /opt/clusterware/bin/alces module aliases} alces_aliases
 eval $alces_aliases

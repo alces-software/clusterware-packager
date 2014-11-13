@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BASENAME=symphony
+BASENAME=clusterware
 NAME=packager
 
 alces_BASE_REPO_PATH=http://grover.alces-software.com/git/alces-packager-base

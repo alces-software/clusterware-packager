@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BASENAME=symphony
+BASENAME=clusterware
 NAME=packager
 
 alces_modules_version=3.2.10

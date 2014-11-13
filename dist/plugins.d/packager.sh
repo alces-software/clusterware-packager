@@ -6,7 +6,7 @@
 ################################################################################
 if [ "$UID" != "0" ]; then
     if [ "${alces_MODE}" = "system" -a ! -f "$HOME/.alces/.alces-suite" ]; then
-        /opt/alces/bin/alces config install
+        /opt/clusterware/bin/alces config install
     fi
     for a in modules modulerc modulespath; do
 	if [ ! -f "$HOME/.$a" ]; then
@@ -17,7 +17,7 @@ else
     # we are root, so must be using a system-wide installation
     for a in modules modulerc modulespath; do
 	if [ ! -f "$HOME/.$a" ]; then
-	    cp /opt/alces/etc/skel/$a "$HOME/.$a"
+	    cp /opt/clusterware/etc/skel/$a "$HOME/.$a"
 	fi
     done
 fi
@@ -29,7 +29,7 @@ if [ -d "${alces_PATH}/opt/Modules" ]; then
 	export -f module
     fi
     if [ "${alces_MODE}" = "system" ]; then
-      MODULEPATH=`sed -n 's/[      #].*$//; /./H; $ { x; s/^\n//; s/\n/:/g; p; }' /opt/alces/etc/modulespath`
+      MODULEPATH=`sed -n 's/[      #].*$//; /./H; $ { x; s/^\n//; s/\n/:/g; p; }' /opt/clusterware/etc/modulespath`
     fi
     if [ -f "$HOME/.modulespath" ]; then
         USERMODULEPATH=`sed -n 's/[     #].*$//; /./H; $ { x; s/^\n//; s/\n/:/g; p; }' "$HOME/.modulespath"`
@@ -84,7 +84,7 @@ if [ "$BASH_VERSION" ]; then
 # Bash commandline completion (bash 3.0 and above) for Modules 3.2.9
 #
     _module_avail() {
-        "/opt/alces/opt/Modules/bin/modulecmd" bash -t avail 2>&1 | sed '
+        "/opt/clusterware/opt/Modules/bin/modulecmd" bash -t avail 2>&1 | sed '
                 /:$/d;
                 /:ERROR:/d;
                 s#^\(.*\)/\(.\+\)(default)#\1\n\1\/\2#;
@@ -93,7 +93,7 @@ if [ "$BASH_VERSION" ]; then
     }
 
     _module_avail_specific() {
-        "/opt/alces/opt/Modules/bin/modulecmd" bash -t avail 2>&1 | sed '
+        "/opt/clusterware/opt/Modules/bin/modulecmd" bash -t avail 2>&1 | sed '
                 /:$/d;
                 /:ERROR:/d;
                 s#^\(.*\)/\(.\+\)(default)#\1\/\2#;
@@ -166,7 +166,7 @@ fi;;
     }
 
     _alces_packager_list() {
-        "/opt/alces/bin/alces" packager list 2>&1 | sed '
+        "/opt/clusterware/bin/alces" packager list 2>&1 | sed '
                 s#^\(.*\)/\(.\+\)(default)#\1\n\1\/\2#;
                 s#/*$##g;'
     }

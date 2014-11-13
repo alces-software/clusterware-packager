@@ -1,7 +1,7 @@
 ---
 :log_root: /var/log/alces/packager
 :repo_paths:
- - /opt/alces/var/lib/packager/repos/base
+ - /opt/clusterware/var/lib/packager/repos/base
  - /opt/gridware/etc/repos/local
 :gridware: /opt/gridware
 :modules_dir: /opt/gridware/etc/modules

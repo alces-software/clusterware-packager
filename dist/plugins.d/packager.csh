@@ -6,7 +6,7 @@
 ################################################################################
 if ( $uid != "0" ) then
     if ( "${alces_MODE}" == "system" && ! -f "$HOME/.alces/.alces-suite" ) then
-	/opt/alces/bin/alces config install
+	/opt/clusterware/bin/alces config install
     endif
     foreach a ( modules modulerc modulespath )
 	if ( ! -f "$HOME/.$a" ) then
@@ -17,7 +17,7 @@ else
     # we are root, so must be using a system-wide installation
     foreach a ( modules modulerc modulespath )
 	if ( ! -f "$HOME/.$a" ) then
-	    cp /opt/alces/etc/skel/$a "$HOME/.$a"
+	    cp /opt/clusterware/etc/skel/$a "$HOME/.$a"
 	endif
     end
 endif
@@ -52,7 +52,7 @@ alias module $prefix'eval `'$exec_prefix'/modulecmd '$alces_SHELL' '$histchar'*`
 
 if (! $?MODULEPATH ) then
     if ( "${alces_MODE}" == "system" ) then
-      setenv MODULEPATH `sed -n 's/[      #].*$//; /./H; $ { x; s/^\n//; s/\n/:/g; p; }' /opt/alces/etc/modulespath`
+      setenv MODULEPATH `sed -n 's/[      #].*$//; /./H; $ { x; s/^\n//; s/\n/:/g; p; }' /opt/clusterware/etc/modulespath`
     else
       setenv MODULEPATH ""
     endif

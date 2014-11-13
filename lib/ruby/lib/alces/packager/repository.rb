@@ -19,7 +19,7 @@
 # along with Symphony.  If not, see <http://www.gnu.org/licenses/>.            #
 #                                                                              #
 # For more information on the Symphony Toolkit, please visit:                  #
-# http://www.alces-software.org/symphony                                       #
+# https://github.com/alces-software/symphony                                       #
 #                                                                              #
 ################################################################################
 require 'yaml'
@@ -34,7 +34,7 @@ module Alces
       class InvalidRepo < StandardError; end
         
       DEFAULT_CONFIG = {
-        repo_paths: ['/opt/alces/installer/local/'],
+        repo_paths: ['/opt/clusterware/installer/local/'],
       }
 
       class << self

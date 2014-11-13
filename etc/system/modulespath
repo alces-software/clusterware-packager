@@ -19,7 +19,7 @@
 #     limited by the maximum variable size of your shell.
 #
 /opt/gridware/etc/modules
-/opt/alces/etc/modules
+/opt/clusterware/etc/modules
 /opt/service/etc/modules
 # This path is required for the existing stack tool set
-/opt/alces/modulefiles
+/opt/clusterware/modulefiles
