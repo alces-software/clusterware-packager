@@ -92,31 +92,8 @@ if [ -d "${alces_SRC_PATH}/${NAME}/archives" ]; then
   cp "${alces_SRC_PATH}/${NAME}/archives"/* "${alces_ARCHIVES_PATH}"
 fi
 
-title "Installing environment modules"
-if [ -d "${alces_PATH}/opt/Modules" ]; then
-    doing 'Skip'
-    say_done $?
-else
-    cd "${alces_SRC_PATH}"
-    doing 'Extract'
-    tar xzf "${alces_ARCHIVES_PATH}/modules-${alces_modules_version}.tar.gz"
-    say_done $?
-    cd modules-${alces_modules_version}
-    doing 'Configure'
-    if [ -f /usr/lib64/tclConfig.sh ]; then
-        TCLLIB=/usr/lib64
-    else
-        TCLLIB=/usr/lib
-    fi
-    ./configure --disable-versioning --with-tcl=$TCLLIB --prefix="${alces_PATH}/opt" &> "${alces_PATH}/${LOGDIR}/modules-configure.log"
-    say_done $?
-    doing 'Compile'
-    make &> "${alces_PATH}/${LOGDIR}/modules-make.log"
-    say_done $?
-    doing 'Install'
-    make install &> "${alces_PATH}/${LOGDIR}/modules-install.log"
-    say_done $?
-fi
+#install deps tree
+/bin/bash ${alces_SRC_PATH}/${NAME}/scripts/build $alces_BUILD_DEPS
 
 title "Installing '${NAME}' facility"
 doing 'Install'
@@ -126,13 +103,6 @@ doing 'Link'
 for a in "${alces_PATH}/opt/${BASENAME}/lib/${NAME}/lib/actions"/*; do
   ln -sf $a "${alces_PATH}/opt/${BASENAME}/lib/actions"
 done
-say_done $?
-
-# install ruby lib gems
-title "Configuring ruby components"
-cd "${alces_PATH}/opt/${BASENAME}/lib/${NAME}/lib/ruby"
-doing 'Configure'
-"${alces_RUBYHOME}/bin/bundle" install --local &> "${alces_PATH}/${LOGDIR}/components-install.log"
 say_done $?
 
 title "Setting up initial gridware structure"
