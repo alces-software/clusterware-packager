@@ -21,7 +21,7 @@ else
 	fi
     done
 fi
-if [ -d "${alces_PATH}/opt/Modules" ]; then
+if [ -d "${alces_PATH}/opt/${alces_OS}/Modules" ]; then
     module() { alces module "$@" ; }
     if [ "$ZSH_VERSION" ]; then
 	export module

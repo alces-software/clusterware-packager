@@ -22,7 +22,7 @@ else
     end
 endif
 
-set exec_prefix='${alces_PATH}/opt/Modules/bin'
+set exec_prefix='${alces_PATH}/opt/${alces_OS}/Modules/bin'
 
 set prefix=""
 set postfix=""
