@@ -92,9 +92,6 @@ if [ -d "${alces_SRC_PATH}/${NAME}/archives" ]; then
   cp "${alces_SRC_PATH}/${NAME}/archives"/* "${alces_ARCHIVES_PATH}"
 fi
 
-#install deps tree
-/bin/bash ${alces_SRC_PATH}/${NAME}/scripts/build $alces_BUILD_DEPS
-
 title "Installing '${NAME}' facility"
 doing 'Install'
 cp -r "${alces_SRC_PATH}/${NAME}/lib" "${alces_PATH}/opt/${BASENAME}/lib/${NAME}"
@@ -104,6 +101,9 @@ for a in "${alces_PATH}/opt/${BASENAME}/lib/${NAME}/lib/actions"/*; do
   ln -sf $a "${alces_PATH}/opt/${BASENAME}/lib/actions"
 done
 say_done $?
+
+#install deps tree
+/bin/bash ${alces_SRC_PATH}/${NAME}/scripts/build $alces_BUILD_DEPS
 
 title "Setting up initial gridware structure"
 if (( UID == 0 )); then
