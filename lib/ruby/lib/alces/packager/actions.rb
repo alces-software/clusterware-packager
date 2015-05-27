@@ -845,10 +845,10 @@ EOF
       def modules
         modules = required_modules
         module_loading = modules.map do |m|
-          "eval `${alces_COREBASE}/Modules/bin/modulecmd sh load #{m} || echo false`"
+          "eval `${alces_DEPSBASE}/Modules/bin/modulecmd sh load #{m} || echo false`"
         end.join("\n")
         <<-BASH
-eval `${alces_COREBASE}/Modules/bin/modulecmd sh purge || echo false` || true
+eval `${alces_DEPSBASE}/Modules/bin/modulecmd sh purge || echo false` || true
 #{module_loading}
 for a in #{modules.join(" ")}; do
   [[ ":$LOADEDMODULES:" =~ ":$a" ]] || false

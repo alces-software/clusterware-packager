@@ -42,12 +42,12 @@ case $action in
 	for a in "$@"; do
 	    case $a in
 		--human|-h|--long|-l|--terse|-t)
-		    ${alces_COREBASE}/Modules/bin/modulecmd $alces_SHELL avail "$@"
+		    ${alces_DEPSBASE}/Modules/bin/modulecmd $alces_SHELL avail "$@"
 		    exit $?
 		    ;;
 	    esac
 	done
-	${alces_COREBASE}/Modules/bin/modulecmd $alces_SHELL avail -t "$@" 2>&1 | (while read l; do
+	${alces_DEPSBASE}/Modules/bin/modulecmd $alces_SHELL avail -t "$@" 2>&1 | (while read l; do
 	    case $l in
 		*:)
 		    if [ "$alces_COLOUR" == "1" ]; then
@@ -146,6 +146,6 @@ case $action in
         display_help $0
 	;;
     *)
-	${alces_COREBASE}/Modules/bin/modulecmd $alces_SHELL $action "$@"
+	${alces_DEPSBASE}/Modules/bin/modulecmd $alces_SHELL $action "$@"
 	;;
 esac
