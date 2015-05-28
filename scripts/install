@@ -111,9 +111,9 @@ if (( UID == 0 )); then
 else
     alces_GRIDWARE="${HOME}/gridware"
 fi
-mkdir -p "${alces_GRIDWARE}/pkg" "${alces_GRIDWARE}/etc/modules" "${alces_GRIDWARE}/etc" "${alces_GRIDWARE}/etc/packager"
+mkdir -p "${alces_GRIDWARE}/pkg/${alces_OS}" "${alces_GRIDWARE}/etc/${alces_OS}/modules" "${alces_GRIDWARE}/etc" "${alces_GRIDWARE}/etc/${alces_OS}/packager"
 doing 'Configure'
-cp -r "${alces_SRC_PATH}/${NAME}/dist/modules"/* "${alces_GRIDWARE}/etc/modules"
+cp -r "${alces_SRC_PATH}/${NAME}/dist/modules"/* "${alces_GRIDWARE}/etc/${alces_OS}/modules"
 cp -r "${alces_SRC_PATH}/${NAME}/dist/plugins.d"/* "${alces_PATH}/etc/${BASENAME}/plugins.d"
 if [ ! -d "${alces_GRIDWARE}/etc/repos" ]; then
   mv "${alces_PATH}/etc/repos" "${alces_GRIDWARE}/etc"

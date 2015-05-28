@@ -4,9 +4,9 @@
  - /opt/clusterware/var/lib/packager/repos/base
  - /opt/gridware/etc/repos/local
 :gridware: /opt/gridware
-:modules_dir: /opt/gridware/etc/modules
-:packages_dir: /opt/gridware/pkg
+:modules_dir: /opt/gridware/etc/el7/modules
+:packages_dir: /opt/gridware/pkg/el7
 :archives_dir: /usr/src/alces/packager/archives
 :local_archives_dir: /opt/gridware/src
 :buildroot: /usr/src/alces/packager/src
-:dbroot: /opt/gridware/etc/packager
+:dbroot: /opt/gridware/etc/el7/packager

@@ -42,7 +42,7 @@ module Alces
 
         def config
           @config ||= DEFAULT_CONFIG.dup.tap do |h|
-            cfgfile = Alces::Tools::Config.find('packager', false)
+            cfgfile = Alces::Tools::Config.find("packager.#{ENV['alces_OS']}", false)
             h.merge!(YAML.load_file(cfgfile)) unless cfgfile.nil?
           end
         end

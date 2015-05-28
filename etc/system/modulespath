@@ -18,7 +18,7 @@
 #     environment variable. You may add as many as you want - just
 #     limited by the maximum variable size of your shell.
 #
-/opt/gridware/etc/modules
+/opt/gridware/etc/$alces_OS/modules
 /opt/clusterware/etc/modules
 /opt/service/etc/modules
 # This path is required for the existing stack tool set
