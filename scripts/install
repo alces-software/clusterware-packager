@@ -4,7 +4,7 @@ BASENAME=clusterware
 NAME=packager
 
 alces_modules_version=3.2.10
-alces_BASE_REPO_PATH=http://grover.alces-software.com/git/alces-packager-base
+alces_BASE_REPO_PATH=https://github.com/alces-software/packager-base.git
 
 # ensure all children die when we do
 trap "/bin/kill -- -$BASHPID &>/dev/null" EXIT INT TERM
